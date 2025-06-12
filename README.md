@@ -18,7 +18,11 @@
 | `useReducer`          | Alternative to `useState` for complex state logic                    | `const [state, dispatch] = useReducer(reducerFn, initialState)`    |
 | `useLayoutEffect`     | Like `useEffect`, but runs **synchronously** after all DOM mutations | `useLayoutEffect(() => { ... }, [dependencies])`                   |
 | `useImperativeHandle` | Customizes what a parent gets when using `ref` with `forwardRef`     | `useImperativeHandle(ref, () => exposedValues, [dependencies])`    |
-|                       |
+| `use`              | Lets you use a promise directly inside components (e.g., fetch, suspense)   | `const data = use(fetchData())`                               |
+| `useOptimistic`    | Show optimistic UI updates before server confirms changes                   | `const [state, add] = useOptimistic(actual, (s, v) => [...s, v])` |
+| `useFormStatus`    | Access a form’s pending state or errors (great for `form` + `action`)       | `const { pending } = useFormStatus()`                         |
+| `useFormState`     | Manage form state and result from server action                             | `const [state, action] = useFormState(serverAction, initial)` |
+
 
 ---
 
@@ -1540,6 +1544,136 @@ function useWindowWidth() {
 }
 ```
 
+---
+
+# New hooks in React 19
+
+1. `useActionState` (previously `useFormState`): streamlines async form submissions—handles pending, success/error, resets form automatically—reducing boilerplate.
+
+```jsx
+import { useActionState } from "react";
+
+async function updateProfile(formData) {
+  const res = await fetch("/api/update", {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) return "Update failed";
+  return null;
+}
+
+function ProfileForm() {
+  const [error, formAction, isPending] = useActionState(updateProfile, null);
+
+  return (
+    <form action={formAction}>
+      <input name="name" placeholder="Your name" />
+      <button disabled={isPending}>Save</button>
+      {error && <p className="text-red-500">{error}</p>}
+    </form>
+  );
+}
+```
+
+2. `useFormStatus`: lets nested components read the state of their parent `<form>` (pending, data, method, etc.) without prop drilling.
+
+```jsx
+import { useFormStatus } from "react-dom";
+
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return <button disabled={pending}>{pending ? "Processing…" : "Pay"}</button>;
+}
+
+export default function PaymentForm() {
+  async function processPayment(formData) {
+    await fetch("/api/charge", { method: "POST", body: formData });
+  }
+
+  return (
+    <form action={processPayment}>
+      <input name="card" placeholder="Card number" />
+      <SubmitButton />
+    </form>
+  );
+}
+```
+
+3. `useOptimistic`: supports optimistic UI updates during async actions, automatically reverting if needed.
+
+```jsx
+import { useOptimistic, useState } from "react";
+
+export default function CommentForm() {
+  const [comments, setComments] = useState([]);
+
+  const [optimisticComments, addOptimisticComment] = useOptimistic(
+    comments,
+    (state, newComment) => [newComment, ...state] // ⬆️ Add on top
+  );
+
+  async function submit(formData) {
+    const text = formData.get("comment");
+    const optimistic = { text, pending: true };
+    addOptimisticComment(optimistic);
+
+    try {
+      const res = await fetch("/api/comment", {
+        method: "POST",
+        body: formData,
+      });
+      if (!res.ok) throw new Error();
+      const saved = await res.json();
+      setComments([saved, ...comments]); // ✅ Confirmed comment
+    } catch {
+      alert("Failed to post comment!");
+      setComments([...comments]); // ❌ Reset optimistic one
+    }
+  }
+
+  return (
+    <form action={submit}>
+      <input name="comment" placeholder="Add comment..." required />
+      <button>Post</button>
+      <ul>
+        {optimisticComments.map((c, i) => (
+          <li key={i}>
+            {c.text} {c.pending && "(sending...)"}
+          </li>
+        ))}
+      </ul>
+    </form>
+  );
+}
+```
+
+4. `use()` : Primitive: allows components to **unwrap promises or async contexts directly in render**, compatible with Suspense.
+
+```jsx
+// Server-rendered comments fetched from API
+import { use } from "react";
+
+function Comments({ commentsPromise }) {
+  // `use` will suspend until the promise resolves.
+  const comments = use(commentsPromise);
+  return comments.map((comment) => <p key={comment.id}>{comment}</p>);
+}
+
+function Page() {
+  const commentsPromise = fetch("/api/comments").then((res) => res.json());
+
+  // When `use` suspends in Comments,
+  // this Suspense boundary will be shown.
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Comments commentsPromise={commentsPromise} />
+    </Suspense>
+  );
+}
+
+// context
+const theme = use(ThemeContext);
+```
 ---
 
 # 🧠 What is `React.memo`?
