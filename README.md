@@ -7,22 +7,21 @@
 
 ## 📘 Commonly Used React Hooks
 
-| **Hook**              | **Purpose (Short Description)**                                      | **Syntax**                                                         |
-| --------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `useState`            | Adds local state to functional components                            | `const [state, setState] = useState(initialValue)`                 |
-| `useEffect`           | Runs side effects like data fetching, subscriptions, DOM updates     | `useEffect(() => { ... }, [dependencies])`                         |
-| `useContext`          | Accesses values from React context                                   | `const value = useContext(MyContext)`                              |
-| `useRef`              | Creates a mutable ref that persists across renders                   | `const ref = useRef(initialValue)`                                 |
-| `useMemo`             | Memoizes a computed value to avoid recalculating                     | `const memoizedValue = useMemo(() => computeFn(), [dependencies])` |
-| `useCallback`         | Memoizes a function to avoid re-creating it unnecessarily            | `const memoizedFn = useCallback(() => { ... }, [dependencies])`    |
-| `useReducer`          | Alternative to `useState` for complex state logic                    | `const [state, dispatch] = useReducer(reducerFn, initialState)`    |
-| `useLayoutEffect`     | Like `useEffect`, but runs **synchronously** after all DOM mutations | `useLayoutEffect(() => { ... }, [dependencies])`                   |
-| `useImperativeHandle` | Customizes what a parent gets when using `ref` with `forwardRef`     | `useImperativeHandle(ref, () => exposedValues, [dependencies])`    |
-| `use`              | Lets you use a promise directly inside components (e.g., fetch, suspense)   | `const data = use(fetchData())`                               |
-| `useOptimistic`    | Show optimistic UI updates before server confirms changes                   | `const [state, add] = useOptimistic(actual, (s, v) => [...s, v])` |
-| `useFormStatus`    | Access a form’s pending state or errors (great for `form` + `action`)       | `const { pending } = useFormStatus()`                         |
-| `useFormState`     | Manage form state and result from server action                             | `const [state, action] = useFormState(serverAction, initial)` |
-
+| **Hook**              | **Purpose (Short Description)**                                           | **Syntax**                                                         |
+| --------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `useState`            | Adds local state to functional components                                 | `const [state, setState] = useState(initialValue)`                 |
+| `useEffect`           | Runs side effects like data fetching, subscriptions, DOM updates          | `useEffect(() => { ... }, [dependencies])`                         |
+| `useContext`          | Accesses values from React context                                        | `const value = useContext(MyContext)`                              |
+| `useRef`              | Creates a mutable ref that persists across renders                        | `const ref = useRef(initialValue)`                                 |
+| `useMemo`             | Memoizes a computed value to avoid recalculating                          | `const memoizedValue = useMemo(() => computeFn(), [dependencies])` |
+| `useCallback`         | Memoizes a function to avoid re-creating it unnecessarily                 | `const memoizedFn = useCallback(() => { ... }, [dependencies])`    |
+| `useReducer`          | Alternative to `useState` for complex state logic                         | `const [state, dispatch] = useReducer(reducerFn, initialState)`    |
+| `useLayoutEffect`     | Like `useEffect`, but runs **synchronously** after all DOM mutations      | `useLayoutEffect(() => { ... }, [dependencies])`                   |
+| `useImperativeHandle` | Customizes what a parent gets when using `ref` with `forwardRef`          | `useImperativeHandle(ref, () => exposedValues, [dependencies])`    |
+| `use`                 | Lets you use a promise directly inside components (e.g., fetch, suspense) | `const data = use(fetchData())`                                    |
+| `useOptimistic`       | Show optimistic UI updates before server confirms changes                 | `const [state, add] = useOptimistic(actual, (s, v) => [...s, v])`  |
+| `useFormStatus`       | Access a form’s pending state or errors (great for `form` + `action`)     | `const { pending } = useFormStatus()`                              |
+| `useFormState`        | Manage form state and result from server action                           | `const [state, action] = useFormState(serverAction, initial)`      |
 
 ---
 
@@ -588,33 +587,73 @@ function App() {
 
 ---
 
-### ✅ `useEffect` — TypeScript Example
+### Note :
+
+- React tracks dependencies in useEffect `by reference`, not by value for `non-primitive` value.
+
+So this:
 
 ```tsx
-useEffect(() => {
-  console.log("Component mounted");
+<button
+  onClick={() => {
+    setUser({ firstname: "Shubham", lastname: "Salunkhe" });
+  }}
+>
+  Update User
+</button>;
 
-  return () => {
-    console.log("Component unmounted");
-  };
-}, []);
+useEffect(() => {
+  console.log("user Updated", user); // runs evevy time even if value of user is same
+}, [user]);
 ```
 
-With async:
+- Creates a new object → new reference → [user] changed → useEffect runs ✅
+- Even if the contents are the same as before.
 
-```tsx
+#### Prevent unnecessary setUser:
+
+```jsx
+// option 1:
+onClick={() => {
+  setUser((prev) => {
+    if (prev.firstname === "" && prev.lastname === "") return prev; // return same previous object if values not change
+    return { firstname: "", lastname: "" };
+  });
+}}
+
+// option 2:
 useEffect(() => {
-  const fetchData = async () => {
-    const res = await fetch("https://api.example.com");
-    const data: MyDataType = await res.json();
-    setData(data);
-  };
+    console.log("user Updated", user);
+}, [user.firstname,user.lastname]);
 
-  fetchData();
-}, []);
+// option 3:
+useEffect(() => {
+  const isSame = user.firstname === "" && user.lastname === "";
+  if (!isSame) {
+    console.log("user Updated", user);
+  }
+}, [user]);
+
+// option 4:
+useDeepCompareEffect(() => {
+    console.log("user Updated", user);
+}, [user]);
+
+// useDeepCompareEffect.jsx
+import { useRef, useEffect } from "react";
+import isEqual from "lodash.isequal";
+
+function useDeepCompareEffect(callback, deps) {
+  const prevDepsRef = useRef();
+
+  if (!isEqual(prevDepsRef.current, deps)) {
+    prevDepsRef.current = deps;
+  }
+
+  useEffect(callback, [prevDepsRef.current]);
+}
+
 ```
-
----
 
 # 🔍 What is `useContext`?
 
@@ -670,6 +709,9 @@ function App() {
     <ThemeContext.Provider value="dark">
       <Child />
     </ThemeContext.Provider>
+    //  <ThemeContext value="dark"> // from React V19
+    //   <Child />
+    // </ThemeContext>
   );
 }
 ```
@@ -685,6 +727,7 @@ import { ThemeContext } from "./ThemeContext";
 
 function Child() {
   const theme = useContext(ThemeContext);
+  // const theme = use(ThemeContext); // from React V19
   return <div>Current theme: {theme}</div>;
 }
 ```
@@ -1432,22 +1475,52 @@ function Counter() {
 
 ---
 
-## 🔄 TypeScript Types
+## 🔄 TypeScript Example
 
 ```tsx
-type State = { count: number };
-type Action = { type: "inc" } | { type: "dec" };
+import { useReducer } from "react";
 
-const reducer = (state: State, action: Action): State => {
-  switch (action.type) {
-    case "inc":
-      return { count: state.count + 1 };
-    case "dec":
-      return { count: state.count - 1 };
-    default:
-      return state;
-  }
+type TAction =
+  | { type: "INCREMENT" }
+  | { type: "DECREMENT" }
+  | { type: "INCREMENT_BY"; payload: number };
+
+type TState = { count: number };
+
+const UseReducerTut = () => {
+  const reducer = (state: TState, action: TAction) => {
+    switch (action?.type) {
+      case "INCREMENT":
+        return { count: state.count + 1 };
+      case "INCREMENT_BY":
+        return { count: state.count + action?.payload };
+      case "DECREMENT":
+        return { count: state.count - 1 };
+      default:
+        return state;
+    }
+  };
+  const [state, dispatch]: [TState, React.Dispatch<TAction>] = useReducer(
+    reducer,
+    {
+      count: 0,
+    }
+  );
+  return (
+    <div>
+      <p>
+        {state.count}
+        <button onClick={() => dispatch({ type: "INCREMENT" })}>Add</button>
+        <button onClick={() => dispatch({ type: "DECREMENT" })}>Minus</button>
+        <button onClick={() => dispatch({ type: "INCREMENT_BY", payload: 5 })}>
+          Add 5
+        </button>
+      </p>
+    </div>
+  );
 };
+
+export default UseReducerTut;
 ```
 
 ---
@@ -1653,6 +1726,8 @@ export default function CommentForm() {
 // Server-rendered comments fetched from API
 import { use } from "react";
 
+const commentsPromise = fetch("/api/comments").then((res) => res.json());
+
 function Comments({ commentsPromise }) {
   // `use` will suspend until the promise resolves.
   const comments = use(commentsPromise);
@@ -1660,13 +1735,11 @@ function Comments({ commentsPromise }) {
 }
 
 function Page() {
-  const commentsPromise = fetch("/api/comments").then((res) => res.json());
-
   // When `use` suspends in Comments,
   // this Suspense boundary will be shown.
   return (
     <Suspense fallback={<div>Loading...</div>}>
-      <Comments commentsPromise={commentsPromise} />
+      <Comments />
     </Suspense>
   );
 }
@@ -1674,6 +1747,7 @@ function Page() {
 // context
 const theme = use(ThemeContext);
 ```
+
 ---
 
 # 🧠 What is `React.memo`?
@@ -1846,5 +1920,80 @@ export default App;
 - If the component is **already very fast**.
 - If props **always change**.
 - If the logic inside is cheap and not worth optimizing.
+
+---
+
+# ✅ What is `forwardRef`?
+
+- A React API that allows you to **pass a `ref` from parent to child**.
+- Used when a parent wants to **directly access** a child’s DOM node or exposed methods.
+
+---
+
+### 💡 Syntax
+
+```tsx
+const MyComponent = React.forwardRef((props, ref) => {
+  return <input ref={ref} {...props} />;
+});
+```
+
+---
+
+### 🧠 Key Points
+
+1. `ref` is **received as the second argument** (after `props`) in `forwardRef`.
+2. It only works on **function components** (not regular JS functions or class components).
+3. Used to **access DOM elements** or **imperative methods** inside functional components.
+4. Works great with `useRef()` and `useImperativeHandle()`.
+
+---
+
+### ✅ Example: Forwarding ref to an `<input>`
+
+#### 👇 Child Component
+
+```tsx
+const Input = React.forwardRef<
+  HTMLInputElement,
+  React.InputHTMLAttributes<HTMLInputElement>
+>((props, ref) => {
+  return <input ref={ref} {...props} />;
+});
+```
+
+#### 👇 Parent Component
+
+```tsx
+const Parent = () => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <>
+      <Input ref={inputRef} />
+      <button onClick={() => inputRef.current?.focus()}>Focus</button>
+    </>
+  );
+};
+```
+
+---
+
+### 🔐 With `useImperativeHandle` (optional)
+
+To **customize what is exposed** through `ref`:
+
+```tsx
+const FancyInput = forwardRef((_, ref) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => inputRef.current?.focus(),
+    clear: () => (inputRef.current!.value = ""),
+  }));
+
+  return <input ref={inputRef} />;
+});
+```
 
 ---
