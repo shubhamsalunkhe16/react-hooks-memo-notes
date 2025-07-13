@@ -1,13 +1,21 @@
 # 🧠 What Are React Hooks?
 
-- special functions that let you **use state, lifecycle methods, and other React features in functional components**—without writing a class.
-- introduced in **React 16.8**
+- special functions that let you `use state, lifecycle methods, and other React features in functional components`—without writing a class.
+- introduced in `React 16.8`
+
+---
+
+## 🔄 Rules of Hooks
+
+1. ✅ Only call hooks `at the top level` (not inside loops or conditions).
+2. ✅ Only call hooks `from React functions` (components or custom hooks).
+3. ✅ Cannot use inside loops or conditions.
 
 ---
 
 ## 📘 Commonly Used React Hooks
 
-| **Hook**              | **Purpose (Short Description)**                                           | **Syntax**                                                         |
+| `Hook`                | `Purpose (Short Description)`                                             | `Syntax`                                                           |
 | --------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | `useState`            | Adds local state to functional components                                 | `const [state, setState] = useState(initialValue)`                 |
 | `useEffect`           | Runs side effects like data fetching, subscriptions, DOM updates          | `useEffect(() => { ... }, [dependencies])`                         |
@@ -16,19 +24,12 @@
 | `useMemo`             | Memoizes a computed value to avoid recalculating                          | `const memoizedValue = useMemo(() => computeFn(), [dependencies])` |
 | `useCallback`         | Memoizes a function to avoid re-creating it unnecessarily                 | `const memoizedFn = useCallback(() => { ... }, [dependencies])`    |
 | `useReducer`          | Alternative to `useState` for complex state logic                         | `const [state, dispatch] = useReducer(reducerFn, initialState)`    |
-| `useLayoutEffect`     | Like `useEffect`, but runs **synchronously** after all DOM mutations      | `useLayoutEffect(() => { ... }, [dependencies])`                   |
+| `useLayoutEffect`     | Like `useEffect`, but runs `synchronously` after all DOM mutations        | `useLayoutEffect(() => { ... }, [dependencies])`                   |
 | `useImperativeHandle` | Customizes what a parent gets when using `ref` with `forwardRef`          | `useImperativeHandle(ref, () => exposedValues, [dependencies])`    |
 | `use`                 | Lets you use a promise directly inside components (e.g., fetch, suspense) | `const data = use(fetchData())`                                    |
 | `useOptimistic`       | Show optimistic UI updates before server confirms changes                 | `const [state, add] = useOptimistic(actual, (s, v) => [...s, v])`  |
 | `useFormStatus`       | Access a form’s pending state or errors (great for `form` + `action`)     | `const { pending } = useFormStatus()`                              |
-| `useFormState`        | Manage form state and result from server action                           | `const [state, action] = useFormState(serverAction, initial)`      |
-
----
-
-## 🔄 Rules of Hooks
-
-1. ✅ Only call hooks **at the top level** (not inside loops or conditions).
-2. ✅ Only call hooks **from React functions** (components or custom hooks).
+| `useActionState`      | Manage form state and result from server action                           | `const [state, action] = useActionState(serverAction, initial)`    |
 
 ---
 
@@ -39,13 +40,13 @@
 | State                     | `this.state`              | `useState()`           |
 | Lifecycle methods         | `componentDidMount`, etc. | `useEffect()`          |
 | Cleaner syntax            | ❌                        | ✅                     |
-| Logic reuse (composition) | Difficult                 | Easy with custom hooks |
+| Logic reuse (composition) | Difficult (HOC)           | Easy with custom hooks |
 
 ---
 
 # 🔍 What is `useState`?
 
-used to add **state** to functional components.
+used to add `state` to functional components.
 
 ```tsx
 const [state, setState] = useState(initialValue);
@@ -74,7 +75,7 @@ function Counter() {
 
 ## ⚙️ `useState` Parameters and Behavior
 
-### 1. **Initial State Value**
+### 1. `Initial State Value`
 
 ```tsx
 const [name, setName] = useState("Shubham");
@@ -82,14 +83,14 @@ const [name, setName] = useState("Shubham");
 
 You can pass:
 
-- A **primitive** (string, number, boolean)
-- An **object**
-- An **array**
+- A `primitive` (string, number, boolean)
+- An `object`
+- An `array`
 - Or even a function for lazy initialization
 
 ---
 
-### 2. **Lazy Initialization**
+### 2. `Lazy Initialization`
 
 Useful if initial state is expensive to compute.
 
@@ -102,11 +103,11 @@ const [data, setData] = useState(() => {
 });
 ```
 
-This function only runs **on the first render**.
+This function only runs `on the first render`.
 
 ---
 
-### 3. **Updating State**
+### 3. `Updating State`
 
 #### a) Direct value
 
@@ -120,13 +121,13 @@ setCount(5);
 setCount((prev) => prev + 1);
 ```
 
-This is **safer** when updating inside closures or async logic.
+This is `safer` when updating inside closures or async logic.
 
 ---
 
-### 4. **State is Isolated**
+### 4. `State is Isolated`
 
-Each `useState` call is **independent**:
+Each `useState` call is `independent`:
 
 ```tsx
 const [count, setCount] = useState(0);
@@ -149,7 +150,7 @@ setUser({ age: 28 });
 setUser((prev) => ({ ...prev, age: 28 }));
 ```
 
-Unlike class components, `useState` **does not merge** object state automatically.
+Unlike class components, `useState` `does not merge` object state automatically.
 
 ---
 
@@ -190,10 +191,10 @@ class Counter extends React.Component {
 
 ## ✅ Best Practices
 
-- Use **functional updates** when new state depends on the old one
-- For **complex state**, consider `useReducer`
-- Use **separate `useState` calls** for unrelated state variables
-- **Avoid direct object mutation** in state
+- Use `functional updates` when new state depends on the old one
+- For `complex state`, consider `useReducer`
+- Use `separate `useState` calls` for unrelated state variables
+- `Avoid direct object mutation` in state
 
 ---
 
@@ -221,7 +222,7 @@ const [items, setItems] = useState<string[]>([]);
 
 # 🔍 What is `useEffect`?
 
-allows you to **run side effects** in function components.
+allows you to `run side effects` in function components.
 
 Side effects include:
 
@@ -248,12 +249,12 @@ useEffect(() => {
 
 ## ⚙️ How `useEffect` Works
 
-- **Runs after render**
-- Only re-runs if **dependencies change**
-- The **cleanup function** runs:
+- `Runs after render`
+- Only re-runs if `dependencies change`
+- The `cleanup function` runs:
 
   - Before the effect re-runs (on dependency change)
-  - When the component **unmounts**
+  - When the component `unmounts`
 
 ---
 
@@ -265,7 +266,7 @@ useEffect(() => {
 }, []);
 ```
 
-Runs once on **mount** (because `[]` means no dependencies).
+Runs once on `mount` (because `[]` means no dependencies).
 
 ---
 
@@ -339,7 +340,7 @@ useEffect(() => {
 
 ## ✅ Real-World Use Cases
 
-### 1. **Fetching API data**
+### 1. `Fetching API data`
 
 ```tsx
 useEffect(() => {
@@ -355,7 +356,7 @@ useEffect(() => {
 
 ---
 
-### 2. **Listening to window events**
+### 2. `Listening to window events`
 
 ```tsx
 useEffect(() => {
@@ -368,7 +369,7 @@ useEffect(() => {
 
 ---
 
-### 3. **Using `useEffect` with setInterval**
+### 3. `Using `useEffect` with setInterval`
 
 ```tsx
 useEffect(() => {
@@ -384,7 +385,7 @@ useEffect(() => {
 
 ## 👨‍🔬 Advanced Behavior
 
-### 1. **Multiple `useEffect`s**
+### 1. `Multiple `useEffect`s`
 
 You can (and should) separate concerns:
 
@@ -400,7 +401,7 @@ useEffect(() => {
 
 ---
 
-### 2. **Stale Closures**
+### 2. `Stale Closures`
 
 ```tsx
 useEffect(() => {
@@ -440,7 +441,7 @@ useEffect(() => {
 
 ## 🧠 Why This Happens, if we pass non-primitive value?
 
-JavaScript compares **objects, arrays, and functions by reference**, **not by value**.
+JavaScript compares `objects, arrays, and functions by reference`, `not by value`.
 
 ```tsx
 useEffect(() => {
@@ -454,7 +455,7 @@ Even if `options` looks the same:
 const options = { darkMode: true };
 ```
 
-Every render creates a **new object in memory**, so React sees it as a **change**.
+Every render creates a `new object in memory`, so React sees it as a `change`.
 
 ---
 
@@ -474,11 +475,11 @@ function App() {
 }
 ```
 
-This runs **on every render** even though `options` never changes _logically_.
+This runs `on every render` even though `options` never changes _logically_.
 
 ---
 
-## ✅ Solution 1: **useMemo**
+## ✅ Solution 1: `useMemo`
 
 Memoize the non-primitive value:
 
@@ -496,7 +497,7 @@ Now `options` retains the same reference unless dependencies to `useMemo` change
 
 ---
 
-## ✅ Solution 2: **Extract to useState or top-level constant**
+## ✅ Solution 2: `Extract to useState or top-level constant`
 
 ```tsx
 const defaultOptions = { darkMode: true };
@@ -520,11 +521,11 @@ useEffect(() => {
 }, [JSON.stringify(options)]);
 ```
 
-> ⚠️ This works for simple objects, but is **inefficient** and breaks with functions/cycles.
+> ⚠️ This works for simple objects, but is `inefficient` and breaks with functions/cycles.
 
 ---
 
-## ✅ Bonus: When using a **function** as a dependency
+## ✅ Bonus: When using a `function` as a dependency
 
 Functions also change on every render unless memoized:
 
@@ -657,7 +658,7 @@ function useDeepCompareEffect(callback, deps) {
 
 # 🔍 What is `useContext`?
 
-allows **function components to access data from a context**, which can be **shared across the component tree** without passing props manually at every level.
+allows `function components to access data from a context`, which can be `shared across the component tree` without passing props manually at every level.
 
 ---
 
@@ -668,7 +669,7 @@ const value = useContext(MyContext);
 ```
 
 - `MyContext` must be created using `React.createContext()`
-- `value` will be the **nearest value provided** by a `Context.Provider` up the tree
+- `value` will be the `nearest value provided` by a `Context.Provider` up the tree
 
 ---
 
@@ -684,7 +685,7 @@ const ThemeContext = React.createContext("light");
 
 ## 🧪 Basic Example
 
-### 1. **Create the Context**
+### 1. `Create the Context`
 
 ```tsx
 // ThemeContext.js
@@ -695,7 +696,7 @@ export const ThemeContext = createContext("light");
 
 ---
 
-### 2. **Provide the Context**
+### 2. `Provide the Context`
 
 Wrap a part of your component tree with `ThemeContext.Provider`.
 
@@ -718,7 +719,7 @@ function App() {
 
 ---
 
-### 3. **Consume with `useContext`**
+### 3. `Consume with `useContext``
 
 ```tsx
 // Child.jsx
@@ -736,11 +737,11 @@ function Child() {
 
 ## 🎯 When to Use `useContext`
 
-- **Global themes** (dark/light mode)
-- **User authentication state**
-- **Language/localization (i18n)**
-- **Global settings or config**
-- **Sharing state across deeply nested components**
+- `Global themes` (dark/light mode)
+- `User authentication state`
+- `Language/localization (i18n)`
+- `Global settings or config`
+- `Sharing state across deeply nested components`
 
 ---
 
@@ -790,9 +791,9 @@ const { user, logout } = useContext(AuthContext);
 <AuthContext.Provider value={{ user }}>...</AuthContext.Provider>
 ```
 
-Every time `user` changes, all components consuming this context **will re-render**.
+Every time `user` changes, all components consuming this context `will re-render`.
 
-✅ **Fix**: memoize context value
+✅ `Fix`: memoize context value
 
 ```tsx
 const value = useMemo(() => ({ user, login, logout }), [user]);
@@ -802,7 +803,7 @@ const value = useMemo(() => ({ user, login, logout }), [user]);
 
 ### 2. ❌ Don't use context for high-frequency updates (e.g., mouse position, timers)
 
-Use `context` for **low-frequency**, app-wide data.
+Use `context` for `low-frequency`, app-wide data.
 
 ---
 
@@ -852,8 +853,8 @@ const useUser = () => {
 
 # 📌 What is `useRef`?
 
-1. **Persists a value across renders** **without causing a re-render** when it changes.
-2. Provides a **direct reference to a DOM element**.
+1. `Persists a value across renders` `without causing a re-render` when it changes.
+2. Provides a `direct reference to a DOM element`.
 
 ---
 
@@ -864,13 +865,13 @@ const myRef = useRef(initialValue);
 ```
 
 - Returns an object: `{ current: initialValue }`
-- Changing `.current` **does NOT trigger a re-render**
+- Changing `.current` `does NOT trigger a re-render`
 
 ---
 
 ## 🎯 Two Main Use Cases
 
-### 1. **Accessing DOM Elements (like `document.getElementById`)**
+### 1. `Accessing DOM Elements (like `document.getElementById`)`
 
 ```tsx
 function App() {
@@ -897,7 +898,7 @@ function App() {
 
 ---
 
-### 2. **Storing Mutable Values That Don’t Cause Re-Renders**
+### 2. `Storing Mutable Values That Don’t Cause Re-Renders`
 
 ```tsx
 function Timer() {
@@ -915,10 +916,10 @@ function Timer() {
 
 ✅ Good for:
 
-- **Tracking state** across renders without re-rendering
-- **Storing timeout/interval IDs**
-- **Tracking previous props/state**
-- **Avoiding stale closures**
+- `Tracking state` across renders without re-rendering
+- `Storing timeout/interval IDs`
+- `Tracking previous props/state`
+- `Avoiding stale closures`
 
 ---
 
@@ -947,11 +948,11 @@ function Counter() {
 
 ## ⚠️ Important Notes
 
-### 1. `useRef` does **not** notify React when `.current` changes
+### 1. `useRef` does `not` notify React when `.current` changes
 
-Unlike `useState`, changing `.current` does **not** cause a re-render.
+Unlike `useState`, changing `.current` does `not` cause a re-render.
 
-### 2. `useRef` is like a **box** that holds a mutable value across renders.
+### 2. `useRef` is like a `box` that holds a mutable value across renders.
 
 ```tsx
 const myRef = useRef(123);
@@ -974,12 +975,12 @@ myRef.current = 456;
 
 ## 🎯 Real-World Use Cases
 
-1. **Focus / scroll to an input**
-2. **Avoiding stale values inside `setTimeout`**
-3. **Tracking if component is mounted**
-4. **Measuring DOM size (`offsetHeight`, `getBoundingClientRect`)**
-5. **Preventing double submission of a form**
-6. **Saving previous props/state**
+1. `Focus / scroll to an input`
+2. `Avoiding stale values inside `setTimeout``
+3. `Tracking if component is mounted`
+4. `Measuring DOM size (`offsetHeight`, `getBoundingClientRect`)`
+5. `Preventing double submission of a form`
+6. `Saving previous props/state`
 
 ---
 
@@ -992,7 +993,7 @@ this.myRef = React.createRef(); // for DOM access
 this.anyVar = someValue; // for mutable vars
 ```
 
-But `createRef()` creates a **new ref on every render**, unlike `useRef`, which persists.
+But `createRef()` creates a `new ref on every render`, unlike `useRef`, which persists.
 
 ---
 
@@ -1010,7 +1011,7 @@ But `createRef()` creates a **new ref on every render**, unlike `useRef`, which 
 
 ## ⚠️ Gotchas
 
-- ❌ Don't use `useRef` when you need the UI to **respond to a change** → use `useState`.
+- ❌ Don't use `useRef` when you need the UI to `respond to a change` → use `useState`.
 - ❌ Don't assign `ref.current = ...` inside JSX directly — use the `ref` prop.
 - ✅ Combine `useRef` with `useEffect` when accessing DOM after mount.
 
@@ -1037,7 +1038,7 @@ renderCount.current += 1;
 
 # 🔍 What is `useMemo`?
 
-**memoizes a calculated value** — it recomputes the value **only when its dependencies change**.
+`memoizes a calculated value` — it recomputes the value `only when its dependencies change`.
 
 ---
 
@@ -1047,16 +1048,16 @@ renderCount.current += 1;
 const memoizedValue = useMemo(() => computeExpensiveValue(a, b), [a, b]);
 ```
 
-- The function runs **only if `a` or `b` changed**.
-- Otherwise, React returns the **cached result**.
+- The function runs `only if `a`or`b` changed`.
+- Otherwise, React returns the `cached result`.
 
 ---
 
 ## 💡 When to Use
 
-- You have **expensive computations** (filtering, sorting, calculating).
-- You want to **prevent unnecessary recalculations** on every render.
-- You need **referential equality** (for memoized child props).
+- You have `expensive computations` (filtering, sorting, calculating).
+- You want to `prevent unnecessary recalculations` on every render.
+- You need `referential equality` (for memoized child props).
 
 ---
 
@@ -1077,7 +1078,7 @@ function App({ num }) {
 }
 ```
 
-🔄 The computation **only re-runs** if `num` changes.
+🔄 The computation `only re-runs` if `num` changes.
 
 ---
 
@@ -1101,7 +1102,7 @@ function ProductList({ products, search }) {
 }
 ```
 
-Without `useMemo`, `filter()` runs **on every render**.
+Without `useMemo`, `filter()` runs `on every render`.
 
 ---
 
@@ -1112,17 +1113,17 @@ const memoizedData = useMemo(() => ({ x: 1 }), []);
 <TestComponent data={memoizedData} />;
 ```
 
-- Without `useMemo`, `data={{ x: 1 }}` creates a **new object** every render
-- Memoized children using `React.memo` would still **re-render unnecessarily** without `useMemo`
+- Without `useMemo`, `data={{ x: 1 }}` creates a `new object` every render
+- Memoized children using `React.memo` would still `re-render unnecessarily` without `useMemo`
 
 ---
 
 ## 🔄 `useMemo` vs `useCallback`
 
-| Hook          | Purpose                | Returns        |
-| ------------- | ---------------------- | -------------- |
-| `useMemo`     | Memoize a **value**    | Computed value |
-| `useCallback` | Memoize a **function** | Function       |
+| Hook          | Purpose              | Returns        |
+| ------------- | -------------------- | -------------- |
+| `useMemo`     | Memoize a `value`    | Computed value |
+| `useCallback` | Memoize a `function` | Function       |
 
 ---
 
@@ -1130,7 +1131,7 @@ const memoizedData = useMemo(() => ({ x: 1 }), []);
 
 ### 1. ❌ Don’t Overuse It
 
-- Use it **only** for **heavy computation** or **referential equality**
+- Use it `only` for `heavy computation` or `referential equality`
 - React’s render performance is good — don’t memoize everything
 
 ### 2. ❌ Memoizing Primitives Is Pointless
@@ -1143,7 +1144,7 @@ const x = useMemo(() => 5, []); // ❌ not needed
 
 ## 💥 Memoizing Non-Primitive Dependencies
 
-If your dependencies are **arrays, objects, or functions**, ensure they’re **stable**:
+If your dependencies are `arrays, objects, or functions`, ensure they’re `stable`:
 
 ### ❌ This will recalculate every time:
 
@@ -1194,8 +1195,8 @@ Without `useMemo`, `items` would be a new array on each render, and `List` would
 
 ## 🧠 When NOT to Use `useMemo`
 
-- For **simple values** like strings, numbers
-- When the calculation is **not expensive**
+- For `simple values` like strings, numbers
+- When the calculation is `not expensive`
 - When value doesn’t depend on props/state
 
 ---
@@ -1224,7 +1225,7 @@ const filteredData = useMemo<string[]>(() => {
 
 # 📌 What is `useCallback`?
 
-**memoizes a function** reference — it **returns the same function instance** unless its dependencies change.
+`memoizes a function` reference — it `returns the same function instance` unless its dependencies change.
 
 > _Think of it as `useMemo` for functions._
 
@@ -1238,16 +1239,16 @@ const memoizedCallback = useCallback(() => {
 }, [a, b]);
 ```
 
-- Returns a **memoized version of the function**
-- **Only re-created** when dependencies (`a`, `b`) change
+- Returns a `memoized version of the function`
+- `Only re-created` when dependencies (`a`, `b`) change
 
 ---
 
 ## 🎯 Why Use `useCallback`?
 
-- To **prevent unnecessary re-creation of functions** on every render.
-- To **avoid re-renders** of memoized children via `React.memo`.
-- To **pass stable function references** to `useEffect`, event handlers, or external libraries
+- To `prevent unnecessary re-creation of functions` on every render.
+- To `avoid re-renders` of memoized children via `React.memo`.
+- To `pass stable function references` to `useEffect`, event handlers, or external libraries
 
 ---
 
@@ -1275,7 +1276,7 @@ function App() {
 }
 ```
 
-🛑 Every time `App` re-renders, `handleClick` is recreated → **`Button` re-renders unnecessarily**, even though its props are the same.
+🛑 Every time `App` re-renders, `handleClick` is recreated → ``Button` re-renders unnecessarily`, even though its props are the same.
 
 ---
 
@@ -1287,17 +1288,17 @@ const handleClick = useCallback(() => {
 }, []);
 ```
 
-- Now `handleClick` has a **stable identity** (same reference)
+- Now `handleClick` has a `stable identity` (same reference)
 - `Button` will NOT re-render thanks to `React.memo`
 
 ---
 
 ## 🔬 `useCallback` vs `useMemo`
 
-| Hook          | Purpose                      | Returns   | Use When                        |
-| ------------- | ---------------------------- | --------- | ------------------------------- |
-| `useCallback` | Memoize a **function**       | Function  | To avoid re-creating callbacks  |
-| `useMemo`     | Memoize a **computed value** | Any value | To cache expensive calculations |
+| Hook          | Purpose                    | Returns   | Use When                        |
+| ------------- | -------------------------- | --------- | ------------------------------- |
+| `useCallback` | Memoize a `function`       | Function  | To avoid re-creating callbacks  |
+| `useMemo`     | Memoize a `computed value` | Any value | To cache expensive calculations |
 
 ---
 
@@ -1314,7 +1315,7 @@ const Child = React.memo(({ onClick }) => {
 const handleClick = useCallback(() => {}, []);
 ```
 
-➡️ Because `onClick` has **same reference**, `React.memo` will skip re-render.
+➡️ Because `onClick` has `same reference`, `React.memo` will skip re-render.
 
 ### With `areEqual`
 
@@ -1324,13 +1325,13 @@ const MemoChild = React.memo(Child, (prevProps, nextProps) => {
 });
 ```
 
-✅ `useCallback` ensures `onClick` remains **strictly equal**, preventing re-renders.
+✅ `useCallback` ensures `onClick` remains `strictly equal`, preventing re-renders.
 
 ---
 
 ## ⚠️ Common Pitfalls
 
-### 1. **Using Without Dependency Array**
+### 1. `Using Without Dependency Array`
 
 ```tsx
 const handleClick = useCallback(() => {
@@ -1344,7 +1345,7 @@ const handleClick = useCallback(() => {
 
 ---
 
-### 2. **Overusing `useCallback`**
+### 2. `Overusing `useCallback``
 
 ```tsx
 const handleInput = useCallback((e) => {
@@ -1352,13 +1353,13 @@ const handleInput = useCallback((e) => {
 }, []);
 ```
 
-- This is **cheap to re-create**, so `useCallback` adds **more complexity** than value.
+- This is `cheap to re-create`, so `useCallback` adds `more complexity` than value.
 
 ✅ Only use `useCallback` when:
 
 - The function is passed to a memoized child (`React.memo`)
 - The function is expensive to re-create (closure-heavy)
-- You care about **reference stability**
+- You care about `reference stability`
 
 ---
 
@@ -1402,8 +1403,8 @@ const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
 
 # 🧠 What is `useReducer`?
 
-- used to manage **more complex or structured state logic** than `useState` can easily handle.
-- It’s inspired by **Redux-style** state management and works by **dispatching actions** to a reducer function.
+- used to manage `more complex or structured state logic` than `useState` can easily handle.
+- It’s inspired by `Redux-style` state management and works by `dispatching actions` to a reducer function.
 
 ---
 
@@ -1525,16 +1526,118 @@ export default UseReducerTut;
 
 ---
 
+# ✅ What is `useId` in React?
+
+`useId` is a React Hook introduced in `React 18` that generates a unique ID that remains the same across the server and client, making it ideal for:
+
+- Accessibility attributes (`aria-labelledby`, `aria-describedby`)
+- Form control associations (`label` + `input`)
+- SSR (Server-Side Rendering) consistency
+
+---
+
+## ✅ Why use `useId`?
+
+1. `Stable across renders` – the generated ID doesn't change.
+2. `Avoids ID collisions` – especially useful when rendering multiple components.
+3. `SSR Safe` – prevents hydration mismatches due to mismatched IDs.
+
+---
+
+## ✅ Syntax
+
+```tsx
+const id = useId();
+```
+
+---
+
+## ✅ Example in TypeScript (TSX)
+
+```tsx
+import React, { useId } from "react";
+
+const InputWithLabel: React.FC = () => {
+  const id = useId();
+
+  return (
+    <div>
+      <label htmlFor={id}>Username:</label>
+      <input id={id} type="text" />
+    </div>
+  );
+};
+
+export default InputWithLabel;
+```
+
+---
+
+## ✅ Example: Accessible Component with `aria-labelledby`
+
+```tsx
+import React, { useId } from "react";
+
+const AlertBox: React.FC = () => {
+  const id = useId();
+
+  return (
+    <div role="alert" aria-labelledby={id}>
+      <h2 id={id}>Error</h2>
+      <p>Something went wrong. Please try again.</p>
+    </div>
+  );
+};
+```
+
+---
+
+## ✅ TypeScript Considerations
+
+- `useId()` returns a `string`.
+- No need to provide a type annotation unless assigning to a typed object.
+
+```ts
+const id: string = useId(); // Optional – useId already returns string
+```
+
+---
+
+## ✅ Advanced: Prefix IDs for Multiple Components
+
+```tsx
+const id = `input-${useId()}`;
+// results in something like: input-react-:r1:
+```
+
+---
+
+## ⚠️ Notes
+
+- Only use `useId` `for DOM ID attributes`. Not for keys in lists.
+- It’s `not suitable` for generating form data or persistent user identifiers.
+
+---
+
+## ✅ When Not to Use `useId`
+
+Avoid it for:
+
+- `key` props in lists → use stable unique data (like `uuid`, `item.id`, etc.)
+- Tracking or logging → prefer something persistent and domain-specific
+
+---
+
 # 🧠 `useEffect` vs `useLayoutEffect`
 
-| Feature                   | `useEffect`                                | `useLayoutEffect`                           |
-| ------------------------- | ------------------------------------------ | ------------------------------------------- |
-| **Execution Timing**      | Runs **after** the paint                   | Runs **before** the paint                   |
-| **UI Blocking**           | ✅ Non-blocking (async)                    | ❌ Blocking (sync) – delays paint           |
-| **Use Case**              | Fetch data, event listeners, logging, etc. | Measure DOM, fix layout before user sees it |
-| **Performance**           | More efficient for most side effects       | Slightly heavier – avoid unless necessary   |
-| **Browser Paint**         | Runs **after** the screen update           | Runs **before** the screen is updated       |
-| **SSR Support (Next.js)** | ✅ Runs only on client                     | ⚠️ Throws warning if used during SSR        |
+| Feature                 | `useEffect`                                | `useLayoutEffect`                           |
+| ----------------------- | ------------------------------------------ | ------------------------------------------- |
+| `Execution Timing`      | Runs `after` the paint                     | Runs `before` the paint                     |
+| `UI Blocking`           | ✅ Non-blocking (async)                    | ❌ Blocking (sync) – delays paint           |
+| `Use Case`              | Fetch data, event listeners, logging, etc. | Measure DOM, fix layout before user sees it |
+| `Performance`           | More efficient for most side effects       | Slightly heavier – avoid unless necessary   |
+| `Browser Paint`         | Runs `after` the screen update             | Runs `before` the screen is updated         |
+| `SSR Support (Next.js)` | ✅ Runs only on client                     | ⚠️ Throws warning if used during SSR        |
 
 ---
 
@@ -1594,14 +1697,172 @@ function LayoutEffectExample() {
 }
 ```
 
-📝 If the DOM is mutated in `useEffect`, the user might **see a flicker**.
-Using `useLayoutEffect` avoids this, as it ensures updates happen **before** paint.
+📝 If the DOM is mutated in `useEffect`, the user might `see a flicker`.
+Using `useLayoutEffect` avoids this, as it ensures updates happen `before` paint.
+
+---
+
+# 📌 useTransition Hook
+
+React distinguishes between:
+
+- `Urgent updates` (e.g., typing, clicking buttons)
+- `Non-urgent updates` (e.g., loading a list, fetching data, filtering)
+
+`useTransition` lets you mark updates as `non-urgent`, so React can:
+
+- Keep the UI responsive (especially input fields)
+- Avoid blocking urgent updates
+
+---
+
+### 🔧 Syntax
+
+```tsx
+const [isPending, startTransition] = useTransition();
+```
+
+- `startTransition(() => { ... })`: tells React this update is `low-priority`
+- `isPending`: boolean to know if the transition is still running
+
+---
+
+### 🧠 Real-World Use Cases
+
+## ✅ 1. `Search Filter with Large List`
+
+```tsx
+import { useTransition, useState } from "react";
+
+export default function FilteredList({ data }) {
+  const [input, setInput] = useState("");
+  const [list, setList] = useState(data);
+  const [isPending, startTransition] = useTransition();
+
+  const handleChange = (e) => {
+    const value = e.target.value;
+    setInput(value);
+
+    startTransition(() => {
+      const filtered = data.filter((item) =>
+        item.toLowerCase().includes(value.toLowerCase())
+      );
+      setList(filtered);
+    });
+  };
+
+  return (
+    <div>
+      <input value={input} onChange={handleChange} placeholder="Search..." />
+      {isPending && <p className="text-gray-500">Filtering...</p>}
+      <ul>
+        {list.map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+📍 Without `startTransition`, typing will lag if the list is huge.
+
+---
+
+## ✅ 2. `Navigation or Tab Switching`
+
+Imagine switching tabs and loading a huge UI (e.g., charts, logs, etc.)
+
+```tsx
+const [tab, setTab] = useState("profile");
+const [isPending, startTransition] = useTransition();
+
+function handleTabChange(newTab) {
+  startTransition(() => {
+    setTab(newTab); // Heavy tab UI re-renders become non-blocking
+  });
+}
+```
+
+---
+
+## ✅ 3. `Lazy Load or Filtered Pagination`
+
+```tsx
+startTransition(() => {
+  setVisiblePosts(allPosts.slice(0, count + 20));
+});
+```
+
+---
+
+## ✅ 4. `Debounced Text Updates`
+
+Let user type freely and show matching content after delay (async or sync):
+
+```tsx
+function handleChange(e) {
+  const value = e.target.value;
+  setInput(value);
+
+  startTransition(() => {
+    setSuggestions(getSuggestions(value));
+  });
+}
+```
+
+---
+
+### ⚙️ How it Works Internally
+
+- `useTransition` defers the `update priority` (like React batch scheduling)
+- Keeps `urgent updates synchronous`
+- Allows `low-priority rendering in background`
+- Automatically shows the last committed screen until the new one is ready
+
+---
+
+### 🔍 Comparison with `useDeferredValue`
+
+| Feature              | `useTransition`                | `useDeferredValue`                  |
+| -------------------- | ------------------------------ | ----------------------------------- |
+| Usage                | Wrap setter logic              | Wrap a value                        |
+| Priority Control     | Yes                            | No                                  |
+| When to Use          | You trigger non-urgent updates | You consume a value that may change |
+| Can handle fetch/set | ✅                             | ❌ (only value deferring)           |
+
+---
+
+### 🔥 Advanced Tip: Use with Suspense
+
+You can show fallback UI during transitions:
+
+```tsx
+<Suspense fallback={<Loading />}>
+  {isPending ? <Skeleton /> : <HeavyComponent />}
+</Suspense>
+```
+
+---
+
+### 🧪 Dev Experience
+
+- `isPending` helps show loading spinners or skeletons
+- Works well with concurrent features (React 18+)
+- Doesn’t require external state libs or debouncing utilities
+
+---
+
+### 🧰 When NOT to Use `useTransition`
+
+- Avoid for `every` state change — only use for `heavy renderings`
+- Don't use if update is quick (e.g., toggling visibility of small element)
 
 ---
 
 # 💡 Custom Hooks
 
-You can **create your own hooks** to reuse logic across components:
+You can `create your own hooks` to reuse logic across components:
 
 ```tsx
 function useWindowWidth() {
@@ -1624,94 +1885,184 @@ function useWindowWidth() {
 1. `useActionState` (previously `useFormState`): streamlines async form submissions—handles pending, success/error, resets form automatically—reducing boilerplate.
 
 ```jsx
-import { useActionState } from "react";
+// loginAction.ts (this is a server file)
+export async function loginAction(_prevState: any, formData: FormData) {
+  "use server";
+  const email = formData.get("email");
+  const password = formData.get("password");
 
-async function updateProfile(formData) {
-  const res = await fetch("/api/update", {
-    method: "POST",
-    body: formData,
-  });
-  if (!res.ok) return "Update failed";
-  return null;
+  // Simulate login or validation
+  if (!email || !password) {
+    return {
+      error: "Missing credentials",
+      success: false,
+    };
+  }
+  await new Promise<void>((resolve) => setTimeout(resolve, 2000));
+  return {
+    error: "",
+    success: true,
+  };
 }
 
-function ProfileForm() {
-  const [error, formAction, isPending] = useActionState(updateProfile, null);
+// UseActionStateTut.tsx
+import { useActionState } from "react";
+import { loginAction } from "../serverActions/loginAction";
+
+type TState = {
+  error: string;
+  success: boolean;
+};
+
+const UseActionStateTut = () => {
+  const [state, dispatch, isPending] = useActionState<TState, FormData>(
+    loginAction,
+    {
+      error: "",
+      success: false,
+    }
+  );
 
   return (
-    <form action={formAction}>
-      <input name="name" placeholder="Your name" />
-      <button disabled={isPending}>Save</button>
-      {error && <p className="text-red-500">{error}</p>}
+    <form action={dispatch}>
+      <input type="email" name="email" placeholder="Email" />
+      <input type="password" name="password" placeholder="Password" />
+      <button type="submit" disabled={isPending}>
+        {isPending ? "Logging in..." : "Login"}
+      </button>
+
+      {state?.error && <p style={{ color: "red" }}>{state.error}</p>}
+      {state?.success && (
+        <p style={{ color: "green" }}>Logged in successfully!</p>
+      )}
     </form>
   );
-}
+};
+
+export default UseActionStateTut;
 ```
 
 2. `useFormStatus`: lets nested components read the state of their parent `<form>` (pending, data, method, etc.) without prop drilling.
 
 ```jsx
-import { useFormStatus } from "react-dom";
+// UseFormStatusTut.tsx (Client Component)
+'use client';
+import { useFormStatus } from 'react-dom';
+import { loginAction } from './loginAction';
+import { useActionState } from 'react';
+
+type TState = {
+  error: string;
+  success: boolean;
+};
 
 function SubmitButton() {
   const { pending } = useFormStatus();
-  return <button disabled={pending}>{pending ? "Processing…" : "Pay"}</button>;
-}
-
-export default function PaymentForm() {
-  async function processPayment(formData) {
-    await fetch("/api/charge", { method: "POST", body: formData });
-  }
 
   return (
-    <form action={processPayment}>
-      <input name="card" placeholder="Card number" />
+    <button type="submit" disabled={pending}>
+      {pending ? "Submitting..." : "Login"}
+    </button>
+  );
+}
+
+export default function UseFormStatusTut() {
+  const [state, dispatch] = useActionState<TState, FormData>(loginAction, {
+    error: '',
+    success: false,
+  });
+
+  return (
+    <form action={dispatch}>
+      <input type="email" name="email" placeholder="Email" />
+      <input type="password" name="password" placeholder="Password" />
       <SubmitButton />
+
+      {state.error && <p className="text-red-600">{state.error}</p>}
+      {state.success && <p className="text-green-600">Login successful!</p>}
     </form>
   );
 }
+
 ```
 
 3. `useOptimistic`: supports optimistic UI updates during async actions, automatically reverting if needed.
 
 ```jsx
-import { useOptimistic, useState } from "react";
+'use client';
+import { useOptimistic, useState } from 'react';
 
-export default function CommentForm() {
-  const [comments, setComments] = useState([]);
+type TComment = {
+  id: string;
+  text: string;
+  pending?: boolean;
+};
 
-  const [optimisticComments, addOptimisticComment] = useOptimistic(
+export default function UseOptimisticTut() {
+  const [comments, setComments] = useState<TComment[]>([]);
+
+  const [optimisticComments, addOptimisticComment] = useOptimistic<TComment[], TComment>(
     comments,
-    (state, newComment) => [newComment, ...state] // ⬆️ Add on top
+    (prevComments, newComment) => [newComment, ...prevComments]
   );
 
-  async function submit(formData) {
-    const text = formData.get("comment");
-    const optimistic = { text, pending: true };
+  async function submit(formData: FormData) {
+    const text = (formData.get('comment') as string)?.trim();
+    if (!text) return;
+
+    const tempId = `temp-${crypto.randomUUID()}`;
+    const optimistic: TComment = {
+      id: tempId,
+      text,
+      pending: true,
+    };
+
     addOptimisticComment(optimistic);
 
     try {
-      const res = await fetch("/api/comment", {
-        method: "POST",
-        body: formData,
-      });
-      if (!res.ok) throw new Error();
-      const saved = await res.json();
-      setComments([saved, ...comments]); // ✅ Confirmed comment
-    } catch {
-      alert("Failed to post comment!");
-      setComments([...comments]); // ❌ Reset optimistic one
+      await new Promise<void>((res) => setTimeout(res, 2000));
+
+      const confirmed: TComment = {
+        id: Date.now().toString(),
+        text,
+      };
+
+      // ✅ Simply add confirmed comment to actual state
+      setComments((prev) => [confirmed, ...prev]);
+    } catch (error) {
+      console.error('Failed to post comment');
+      // Optionally: show error or retry mechanism
     }
   }
 
   return (
-    <form action={submit}>
-      <input name="comment" placeholder="Add comment..." required />
-      <button>Post</button>
-      <ul>
-        {optimisticComments.map((c, i) => (
-          <li key={i}>
-            {c.text} {c.pending && "(sending...)"}
+    <form
+      action={submit}
+      className="space-y-4 max-w-md mx-auto p-4 border rounded"
+    >
+      <input
+        name="comment"
+        placeholder="Add comment..."
+        required
+        className="border px-2 py-1 w-full"
+      />
+      <button
+        type="submit"
+        className="bg-blue-500 text-white px-4 py-1 rounded"
+      >
+        Post
+      </button>
+
+      <ul className="space-y-2 mt-4">
+        {optimisticComments.map((comment) => (
+          <li
+            key={comment.id}
+            className="border p-2 rounded flex justify-between items-center"
+          >
+            <span>{comment.text}</span>
+            {comment.pending && (
+              <span className="text-sm text-gray-500 ml-2">(sending...)</span>
+            )}
           </li>
         ))}
       </ul>
@@ -1720,17 +2071,28 @@ export default function CommentForm() {
 }
 ```
 
-4. `use()` : Primitive: allows components to **unwrap promises or async contexts directly in render**, compatible with Suspense.
+4. `use()` : Primitive: allows components to `unwrap promises or async contexts directly in render`, compatible with Suspense.
 
 ```jsx
 // Server-rendered comments fetched from API
 import { use } from "react";
 
-const commentsPromise = fetch("/api/comments").then((res) => res.json());
+type TComment = {
+  postId: number,
+  id: number,
+  name: string,
+  email: string,
+  body: string,
+};
+
+// This is your fetch promise (can be outside the component)
+const commentPromise: Promise<TComment[]> = fetch(
+  "https://jsonplaceholder.typicode.com/comments"
+).then((res) => res.json());
 
 function Comments({ commentsPromise }) {
   // `use` will suspend until the promise resolves.
-  const comments = use(commentsPromise);
+  const comments: TComment[] = use(commentsPromise);
   return comments.map((comment) => <p key={comment.id}>{comment}</p>);
 }
 
@@ -1752,13 +2114,13 @@ const theme = use(ThemeContext);
 
 # 🧠 What is `React.memo`?
 
-`React.memo` is a **higher-order component (HOC)** used to optimize performance by **preventing unnecessary re-renders** of functional components when their props haven't changed.
+`React.memo` is a `higher-order component (HOC)` used to optimize performance by `preventing unnecessary re-renders` of functional components when their props haven't changed.
 
 ```tsx
 const MemoizedComponent = React.memo(MyComponent);
 ```
 
-It performs a **shallow comparison of props by default**.
+It performs a `shallow comparison of props by default`.
 
 ---
 
@@ -1766,25 +2128,25 @@ It performs a **shallow comparison of props by default**.
 
 ### ✅ Primitive Values (string, number, boolean)
 
-Shallow comparison works **perfectly** with primitives:
+Shallow comparison works `perfectly` with primitives:
 
 ```tsx
 <MyComponent title="Hello" />
 ```
 
-Re-renders **only when the value changes** (`"Hello"` → `"Hi"`).
+Re-renders `only when the value changes` (`"Hello"` → `"Hi"`).
 
 ---
 
 ### ❗ Non-Primitive Values (objects, arrays, functions)
 
-Shallow comparison **fails** with non-primitives because each re-render creates a **new reference**:
+Shallow comparison `fails` with non-primitives because each re-render creates a `new reference`:
 
 ```tsx
 <MyComponent user={{ name: "Shubham" }} />
 ```
 
-Even if `user.name` stays the same, a **new object reference** causes re-rendering.
+Even if `user.name` stays the same, a `new object reference` causes re-rendering.
 
 To prevent this, you need either:
 
@@ -1801,8 +2163,8 @@ Signature:
 (prevProps, nextProps) => boolean;
 ```
 
-- Return `true` to **prevent re-render**
-- Return `false` to **allow re-render**
+- Return `true` to `prevent re-render`
+- Return `false` to `allow re-render`
 
 ---
 
@@ -1838,8 +2200,8 @@ export default React.memo(MemoComponent);
 ```
 
 - `count` — re-render only if value changes ✅
-- `user` — re-renders **every time** ❌ (new object ref)
-- `onClick` — re-renders **every time** ❌ (new function ref)
+- `user` — re-renders `every time` ❌ (new object ref)
+- `onClick` — re-renders `every time` ❌ (new function ref)
 
 ---
 
@@ -1871,7 +2233,7 @@ export default React.memo(MemoComponent, areEqual);
 <MemoComponent onClick={() => console.log("clicked")} />
 ```
 
-…it will **always re-render** (new function ref). Fix this with `useCallback`.
+…it will `always re-render` (new function ref). Fix this with `useCallback`.
 
 ---
 
@@ -1917,16 +2279,16 @@ export default App;
 
 ## 🚫 When NOT to Use React.memo
 
-- If the component is **already very fast**.
-- If props **always change**.
+- If the component is `already very fast`.
+- If props `always change`.
 - If the logic inside is cheap and not worth optimizing.
 
 ---
 
 # ✅ What is `forwardRef`?
 
-- A React API that allows you to **pass a `ref` from parent to child**.
-- Used when a parent wants to **directly access** a child’s DOM node or exposed methods.
+- A React API that allows you to `pass a `ref` from parent to child`.
+- Used when a parent wants to `directly access` a child’s DOM node or exposed methods.
 
 ---
 
@@ -1942,9 +2304,9 @@ const MyComponent = React.forwardRef((props, ref) => {
 
 ### 🧠 Key Points
 
-1. `ref` is **received as the second argument** (after `props`) in `forwardRef`.
-2. It only works on **function components** (not regular JS functions or class components).
-3. Used to **access DOM elements** or **imperative methods** inside functional components.
+1. `ref` is `received as the second argument` (after `props`) in `forwardRef`.
+2. It only works on `function components` (not regular JS functions or class components).
+3. Used to `access DOM elements` or `imperative methods` inside functional components.
 4. Works great with `useRef()` and `useImperativeHandle()`.
 
 ---
@@ -1981,7 +2343,7 @@ const Parent = () => {
 
 ### 🔐 With `useImperativeHandle` (optional)
 
-To **customize what is exposed** through `ref`:
+To `customize what is exposed` through `ref`:
 
 ```tsx
 const FancyInput = forwardRef((_, ref) => {
