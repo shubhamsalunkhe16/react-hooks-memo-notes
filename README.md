@@ -1850,7 +1850,12 @@ function useWindowWidth() {
 
 1. `useActionState` (previously `useFormState`): streamlines async form submissions—handles pending, success/error, resets form automatically—reducing boilerplate.
 
-```jsx
+- syntax
+```tsx
+const [state, formAction, isPending] = useActionState(fn, initialState, permalink?);
+```
+
+```tsx
 // loginAction.ts (this is a server file)
 export async function loginAction(_prevState: any, formData: FormData) {
   "use server";
@@ -1910,6 +1915,11 @@ export default UseActionStateTut;
 
 2. `useFormStatus`: lets nested components read the state of their parent `<form>` (pending, data, method, etc.) without prop drilling.
 
+- syntax
+```tsx
+const { pending, data, method, action } = useFormStatus();
+```
+
 ```jsx
 // UseFormStatusTut.tsx (Client Component)
 'use client';
@@ -1954,87 +1964,138 @@ export default function UseFormStatusTut() {
 
 3. `useOptimistic`: supports optimistic UI updates during async actions, automatically reverting if needed.
 
+- syntax
+```tsx
+const [optimisticState, addOptimistic] = useOptimistic(state, updateFn);
+```
 ```jsx
 'use client';
-import { useOptimistic, useState } from 'react';
+import React, { useState, useTransition } from "react";
+import { useOptimistic } from "react";
 
-type TComment = {
-  id: string;
-  text: string;
-  pending?: boolean;
-};
+function TodoList() {
+  const [todos, setTodos] = useState([]);
+  const [isPending, startTransition] = useTransition();
 
-export default function UseOptimisticTut() {
-  const [comments, setComments] = useState<TComment[]>([]);
+  const [optimisticTodos, setOptimisticTodos] = useOptimistic(
+    todos,
+    (currentTodos, action) => {
+      switch (action.type) {
+        case "add":
+          return [...currentTodos, action.todo];
 
-  const [optimisticComments, addOptimisticComment] = useOptimistic<TComment[], TComment>(
-    comments,
-    (prevComments, newComment) => [newComment, ...prevComments]
+        case "delete":
+          return currentTodos.filter((todo) => todo !== action.todo);
+
+        case "update":
+          return currentTodos.map((todo) =>
+            todo === action.oldTodo ? action.newTodo : todo
+          );
+
+        default:
+          return currentTodos;
+      }
+    }
   );
 
-  async function submit(formData: FormData) {
-    const text = (formData.get('comment') as string)?.trim();
-    if (!text) return;
-
-    const tempId = `temp-${crypto.randomUUID()}`;
-    const optimistic: TComment = {
-      id: tempId,
-      text,
-      pending: true,
-    };
-
-    addOptimisticComment(optimistic);
+  const handleAddTodo = async (newTodo) => {
+    startTransition(() => {
+      setOptimisticTodos({ type: "add", todo: newTodo });
+    });
 
     try {
-      await new Promise<void>((res) => setTimeout(res, 2000));
-
-      const confirmed: TComment = {
-        id: Date.now().toString(),
-        text,
-      };
-
-      // ✅ Simply add confirmed comment to actual state
-      setComments((prev) => [confirmed, ...prev]);
+      await fakeApiCallToAddTodo(newTodo);
+      setTodos((prevTodos) => [...prevTodos, newTodo]); // Persist update
     } catch (error) {
-      console.error('Failed to post comment');
-      // Optionally: show error or retry mechanism
+      console.error("Failed to add todo:", error);
     }
-  }
+  };
+
+  const handleDeleteTodo = async (todoToRemove) => {
+    startTransition(() => {
+      setOptimisticTodos({ type: "delete", todo: todoToRemove });
+    });
+
+    try {
+      await fakeApiCallToDeleteTodo(todoToRemove);
+      setTodos((prevTodos) => prevTodos.filter((todo) => todo !== todoToRemove)); // Persist update
+    } catch (error) {
+      console.error("Failed to delete todo:", error);
+      startTransition(() => {
+        setOptimisticTodos({ type: "add", todo: todoToRemove }); // Revert on failure
+      });
+    }
+  };
+
+  const handleUpdateTodo = async (oldTodo, newTodo) => {
+    startTransition(() => {
+      setOptimisticTodos({ type: "update", oldTodo, newTodo });
+    });
+
+    try {
+      await fakeApiCallToUpdateTodo(oldTodo, newTodo);
+      setTodos((prevTodos) =>
+        prevTodos.map((todo) => (todo === oldTodo ? newTodo : todo))
+      ); // Persist update
+    } catch (error) {
+      console.error("Failed to update todo:", error);
+      startTransition(() => {
+        setOptimisticTodos({ type: "update", oldTodo: newTodo, newTodo: oldTodo }); // Revert on failure
+      });
+    }
+  };
 
   return (
-    <form
-      action={submit}
-      className="space-y-4 max-w-md mx-auto p-4 border rounded"
-    >
-      <input
-        name="comment"
-        placeholder="Add comment..."
-        required
-        className="border px-2 py-1 w-full"
-      />
-      <button
-        type="submit"
-        className="bg-blue-500 text-white px-4 py-1 rounded"
-      >
-        Post
-      </button>
-
-      <ul className="space-y-2 mt-4">
-        {optimisticComments.map((comment) => (
-          <li
-            key={comment.id}
-            className="border p-2 rounded flex justify-between items-center"
-          >
-            <span>{comment.text}</span>
-            {comment.pending && (
-              <span className="text-sm text-gray-500 ml-2">(sending...)</span>
-            )}
+    <div>
+      <ul>
+        {optimisticTodos.map((todo, index) => (
+          <li key={index}>
+            {todo}{" "}
+            <button onClick={() => handleDeleteTodo(todo)} disabled={isPending}>
+              Delete
+            </button>
+            <button
+              onClick={() => handleUpdateTodo(todo, `Updated ${todo}`)}
+              disabled={isPending}
+            >
+              Update
+            </button>
           </li>
         ))}
       </ul>
-    </form>
+      <button
+        onClick={() => handleAddTodo(`New Todo ${Date.now()}`)}
+        disabled={isPending}
+      >
+        Add Todo
+      </button>
+    </div>
   );
 }
+
+// Simulated API calls
+const fakeApiCallToAddTodo = (todo) =>
+  new Promise((resolve, reject) => {
+    setTimeout(() => {
+      Math.random() > 0.3 ? resolve() : reject(new Error("API Error"));
+    }, 1000);
+  });
+
+const fakeApiCallToDeleteTodo = (todo) =>
+  new Promise((resolve, reject) => {
+    setTimeout(() => {
+      Math.random() > 0.3 ? resolve() : reject(new Error("API Error"));
+    }, 1000);
+  });
+
+const fakeApiCallToUpdateTodo = (oldTodo, newTodo) =>
+  new Promise((resolve, reject) => {
+    setTimeout(() => {
+      Math.random() > 0.3 ? resolve() : reject(new Error("API Error"));
+    }, 1000);
+  });
+
+export default TodoList;
 ```
 
 4. `use()` : Primitive: allows components to `unwrap promises or async contexts directly in render`, compatible with Suspense.
