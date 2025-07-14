@@ -7,7 +7,7 @@
 
 ## 🔄 Rules of Hooks
 
-1. ✅ Only call hooks `at the top level` (not inside loops or conditions).
+1. ✅ Only call hooks `at the top level`.
 2. ✅ Only call hooks `from React functions` (components or custom hooks).
 3. ✅ Cannot use inside loops or conditions.
 
